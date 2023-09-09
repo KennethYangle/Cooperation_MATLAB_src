@@ -36,12 +36,12 @@ function fun_plot_particles_simple(mav_pos, target_pos, mav_orient, measurement_
     end
 
     %% 算方向
-    L = 1.5;
+    L = 2;
     mav_orient_xy = zeros(mav_num, particle_num, 2);
     for i = 1:mav_num
         for l = 1:particle_num
-            mav_orient_xy(i,l,1) = mav_pos(i,l,1) + L * cos(mav_orient(i,l));
-            mav_orient_xy(i,l,2) = mav_pos(i,l,2) + L * sin(mav_orient(i,l));
+            mav_orient_xy(i,l,1) = L * cos(mav_orient(i,l));
+            mav_orient_xy(i,l,2) = L * sin(mav_orient(i,l));
         end
     end
 
@@ -50,17 +50,29 @@ function fun_plot_particles_simple(mav_pos, target_pos, mav_orient, measurement_
     for j = 1:target_num
         if norm(measurement_pos) > 0.1
             scatter(measurement_pos(j,1), measurement_pos(j,2), 60, 'MarkerEdgeColor','k', 'MarkerFaceColor',[0.8500, 0.10, 0.0980]);
-            scatter(target_pos(j,:,1), target_pos(j,:,2), 150*size_sphere(j,:), 'MarkerEdgeColor',"#f47923", 'MarkerFaceColor',"#ff8d24");
-            surf(x,y,z, 'FaceAlpha',0.5);
-            mymap = [[1:-0.01:0.]; [1:-0.01:0.]; [1:-0.01:0.]]';
-            colormap(gca, mymap);
-    %         mymap = [1,1,1; 0.6,0.6,0.6];
-    %         colorbar('SouthOutside')
-            shading interp;
-            view(2)
+            if j == 1
+                scatter(target_pos(j,:,1), target_pos(j,:,2), 150*size_sphere(j,:), 'MarkerEdgeColor',"#f47923", 'MarkerFaceColor',"#ff8d24");
+            else
+                scatter(target_pos(j,:,1), target_pos(j,:,2), 150*size_sphere(j,:), 'MarkerEdgeColor',"#ba8a19", 'MarkerFaceColor',"#edb120");
+            end
         else
-            scatter(target_pos(j,:,1), target_pos(j,:,2), 15, 'MarkerEdgeColor',"#f47923", 'MarkerFaceColor',"#ff8d24");
+            if j == 1
+                scatter(target_pos(j,:,1), target_pos(j,:,2), 15, 'MarkerEdgeColor',"#f47923", 'MarkerFaceColor',"#ff8d24");
+            else
+                scatter(target_pos(j,:,1), target_pos(j,:,2), 15, 'MarkerEdgeColor',"#ba8a19", 'MarkerFaceColor',"#edb120");
+            end
         end
+    end
+    
+    %% 画概率
+    if norm(measurement_pos) > 0.1
+        surf(x,y,z, 'FaceAlpha',0.5);
+        mymap = [[1:-0.01:0.]; [1:-0.01:0.]; [1:-0.01:0.]]';
+        colormap(gca, mymap);
+%         mymap = [1,1,1; 0.6,0.6,0.6];
+%         colorbar('SouthOutside')
+        shading interp;
+        view(2)
     end
     
     %% 画圆和箭头
@@ -79,5 +91,6 @@ function fun_plot_particles_simple(mav_pos, target_pos, mav_orient, measurement_
     ylim([ymin, ymax]);
     ax = gca;
     ax.GridLineStyle = '-';
+    set(gca,'ytick',[0 5 10]);
 end
 
