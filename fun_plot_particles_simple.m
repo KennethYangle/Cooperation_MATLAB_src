@@ -1,4 +1,4 @@
-function fun_plot_particles_simple(mav_pos, target_pos, mav_orient, measurement_pos, weight_sphere, size_sphere)
+function fun_plot_particles_simple(t, mav_pos, target_pos, mav_orient, measurement_pos, weight_sphere, size_sphere)
 %画二维粒子分布函数。
 
     mav_num = size(mav_pos, 1);
@@ -50,16 +50,24 @@ function fun_plot_particles_simple(mav_pos, target_pos, mav_orient, measurement_
     for j = 1:target_num
         if norm(measurement_pos) > 0.1
             scatter(measurement_pos(j,1), measurement_pos(j,2), 60, 'MarkerEdgeColor','k', 'MarkerFaceColor',[0.8500, 0.10, 0.0980]);
-            if j == 1
-                scatter(target_pos(j,:,1), target_pos(j,:,2), 150*size_sphere(j,:), 'MarkerEdgeColor',"#f47923", 'MarkerFaceColor',"#ff8d24");
+            if t == 6
+                if j == 1
+                    scatter(target_pos(j,:,1), target_pos(j,:,2), 150*size_sphere(j,:), 'MarkerEdgeColor',"#f47923", 'MarkerFaceColor',"#ff8d24");
+                else
+                    scatter(target_pos(j,:,1), target_pos(j,:,2), 150*size_sphere(j,:), 'MarkerEdgeColor',"#ba8a19", 'MarkerFaceColor',"#edb120");
+                end
             else
-                scatter(target_pos(j,:,1), target_pos(j,:,2), 150*size_sphere(j,:), 'MarkerEdgeColor',"#ba8a19", 'MarkerFaceColor',"#edb120");
+                scatter(target_pos(j,:,1), target_pos(j,:,2), 150*size_sphere(j,:), 'MarkerEdgeColor',"#f47923", 'MarkerFaceColor',"#ff8d24");
             end
         else
-            if j == 1
-                scatter(target_pos(j,:,1), target_pos(j,:,2), 15, 'MarkerEdgeColor',"#f47923", 'MarkerFaceColor',"#ff8d24");
+            if t == 6
+                if j == 1
+                    scatter(target_pos(j,:,1), target_pos(j,:,2), 15, 'MarkerEdgeColor',"#f47923", 'MarkerFaceColor',"#ff8d24");
+                else
+                    scatter(target_pos(j,:,1), target_pos(j,:,2), 15, 'MarkerEdgeColor',"#ba8a19", 'MarkerFaceColor',"#edb120");
+                end
             else
-                scatter(target_pos(j,:,1), target_pos(j,:,2), 15, 'MarkerEdgeColor',"#ba8a19", 'MarkerFaceColor',"#edb120");
+                scatter(target_pos(j,:,1), target_pos(j,:,2), 15, 'MarkerEdgeColor',"#f47923", 'MarkerFaceColor',"#ff8d24");
             end
         end
     end
