@@ -2,8 +2,10 @@
 *.vsd
 *.svg
 *.png
+*.mkv
 *.eps
 *.pdf
+*.fig
 
 *.asv
 *.mat
