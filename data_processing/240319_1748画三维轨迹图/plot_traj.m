@@ -1,4 +1,5 @@
 clc; clear;close all;
+figure_configuration_IEEE_standard;
 
 %% 读数据
 mav_num = 6;
@@ -50,11 +51,21 @@ for i = 1:mav_num
 end
 
 %% 画图
+fig1 = figure(1);
+fig1.Renderer = 'Painters';     % 矢量图
+
 plot3(P.("data1")(:,1), P.("data1")(:,2), P.("data1")(:,3));
 hold on;
 for i = 2:mav_num
     name = strcat("data",num2str(i));
-    plot3(P.(name)(:,1), P.(name)(:,2), P.(name)(:,3));
+    if i <= 3
+        plot3(P.(name)(:,1), P.(name)(:,2), P.(name)(:,3));
+    else
+        plot3(P.(name)(:,1), P.(name)(:,2), P.(name)(:,3), "--");
+    end
 end
 
-legend
+view(-39,52);       % 视角
+legend;             % 图例
+ax = gca;           
+ax.SortMethod = 'childorder';   % 显示虚线，否则矢量图下虚线变实线
