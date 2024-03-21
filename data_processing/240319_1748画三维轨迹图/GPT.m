@@ -1,5 +1,5 @@
 % Load the data
-data = load('data1.mat');
+data = load('data4.mat');
 p = data.p; % Assuming p is your data matrix with dimensions [N, 3] for x, y, z
 
 % Adding noise and offset

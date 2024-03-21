@@ -34,8 +34,8 @@ right = 1;  % normalized right margin 1
 set(0,'defaultFigureUnits','centimeters');
 set(0,'defaultFigurePosition',[0 0 width hight]);
 
-set(0,'defaultLineLineWidth',1*k_scaling);
-set(0,'defaultAxesLineWidth',1*k_scaling);
+set(0,'defaultLineLineWidth',1);
+set(0,'defaultAxesLineWidth',1);
 
 set(0,'defaultAxesGridLineStyle',':');
 set(0,'defaultAxesYGrid','on');
