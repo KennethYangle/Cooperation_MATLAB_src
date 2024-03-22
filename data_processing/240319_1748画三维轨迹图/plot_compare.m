@@ -59,17 +59,6 @@ P_noisy = struct();
 P_filtered1 = struct();
 P_filtered2 = struct();
 P_filtered3 = struct();
-for i = 4:mav_num
-    noise_level = 0.1;
-    offset = 0.5;
-    name = strcat("data",num2str(i));
-    noise = noise_level * randn(size(P.(name))) + offset;
-    P_noisy.(name) = P.(name) + noise;
-    P_filtered1.(name) = imgaussfilt3(P_noisy.(name), 1, 'FilterSize', 3);     % 第2个参数重要
-    P_filtered2.(name) = imgaussfilt3(P_noisy.(name), 0.5, 'FilterSize', 3);     % 第2个参数重要
-    P_filtered3.(name) = imgaussfilt3(P_noisy.(name), 0.1, 'FilterSize', 3);     % 第2个参数重要
-end
-
 
 rmu1 = importdata("rmu1.mat")*0.1;
 rmu2 = importdata("rmu2.mat")*0.1;
@@ -112,6 +101,13 @@ for i = 4:4
     P_filtered3_down.(name) = imgaussfilt3(P_noisy_down.(name), 0.2, 'FilterSize', 3) + [rmd4,2*rmd4,rmd3];
 end
 
+% 滤波均值
+for i = 4:4
+    name = strcat("data",num2str(i));
+    P_filtered1.(name) = ( P_filtered1_up.(name) + P_filtered1_down.(name) ) / 2;
+    P_filtered2.(name) = ( P_filtered2_up.(name) + P_filtered2_down.(name) ) / 2;
+    P_filtered3.(name) = ( P_filtered3_up.(name) + P_filtered3_down.(name) ) / 2;
+end
 
 %% 画图，位置-时间图
 fig1 = figure(1);
@@ -128,13 +124,13 @@ end
 % Ground Truth
 for i = 4:4
     name = strcat("data",num2str(i));
-    plot(T.(name), P.(name)(:,1), "-", 'Color', colors(1), 'linewidth', 1.5);
+    plot(T.(name), P.(name)(:,1), "-", 'Color', colors(1), 'linewidth', 1.0);
 end
 % Case 1-3
 for i = 4:4
-    plot(T.(name), P_filtered1.(name)(:,1), "--", 'Color', colors(4), 'linewidth', 1.0);
-    plot(T.(name), P_filtered2.(name)(:,1), "-.", 'Color', colors(5), 'linewidth', 1.0);
-    plot(T.(name), P_filtered3.(name)(:,1), ":", 'Color', colors(6), 'linewidth', 1.5);
+    plot(T.(name), P_filtered1.(name)(:,1), "--", 'Color', colors(4), 'linewidth', 0.8);
+    plot(T.(name), P_filtered2.(name)(:,1), "-.", 'Color', colors(5), 'linewidth', 0.8);
+    plot(T.(name), P_filtered3.(name)(:,1), ":", 'Color', colors(6), 'linewidth', 1.0);
 end
 ylabel('x(m)');     % 坐标轴标签
 hold off;
@@ -151,13 +147,13 @@ end
 % Ground Truth
 for i = 4:4
     name = strcat("data",num2str(i));
-    plot(T.(name), P.(name)(:,2), "-", 'Color', colors(1), 'linewidth', 1.5);
+    plot(T.(name), P.(name)(:,2), "-", 'Color', colors(1), 'linewidth', 1.0);
 end
 % Case 1-3
 for i = 4:4
-    plot(T.(name), P_filtered1.(name)(:,2), "--", 'Color', colors(4), 'linewidth', 1.0);
-    plot(T.(name), P_filtered2.(name)(:,2), "-.", 'Color', colors(5), 'linewidth', 1.0);
-    plot(T.(name), P_filtered3.(name)(:,2), ":", 'Color', colors(6), 'linewidth', 1.5);
+    plot(T.(name), P_filtered1.(name)(:,2), "--", 'Color', colors(4), 'linewidth', 0.8);
+    plot(T.(name), P_filtered2.(name)(:,2), "-.", 'Color', colors(5), 'linewidth', 0.8);
+    plot(T.(name), P_filtered3.(name)(:,2), ":", 'Color', colors(6), 'linewidth', 1.0);
 end
 xlabel('t(s)');     % 坐标轴标签
 ylabel('y(m)');
