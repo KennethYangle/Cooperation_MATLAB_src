@@ -22,8 +22,8 @@ for i = 1:mav_num
     name = strcat("data",num2str(i));
     Len(i) = size(P.(name), 1);
 end
-P_begin(1) = 21300;      % 根据需要修改终止时刻序号，默认Len(1)。起飞到开始降落20000-23000，逆过程21300-25000更好看
-P_end(1) = 25000;
+P_begin(1) = 20000;      % 根据需要修改终止时刻序号，默认Len(1)。起飞到开始降落20000-23000，逆过程21300-25000更好看
+P_end(1) = 23000;
 
 %% 确定绘图数据区间
 for i = 2:mav_num
@@ -60,14 +60,22 @@ P_filtered1 = struct();
 P_filtered2 = struct();
 P_filtered3 = struct();
 
-rmu1 = importdata("rmu1.mat")*0.1;
-rmu2 = importdata("rmu2.mat")*0.1;
-rmu3 = importdata("rmu3.mat")*0.1;
-rmu4 = importdata("rmu4.mat")*0.1;
-rmd1 = importdata("rmd1.mat")*0.1;
-rmd2 = importdata("rmd2.mat")*0.1;
+rmu1 = importdata("rmu1.mat");
+rmu1 = rmu1(1:1000)*0.1;
+rmu2 = importdata("rmu2.mat");
+rmu2 = rmu2(1:1000)*0.1;
+rmu3 = importdata("rmu3.mat");
+rmu3 = rmu3(1:1000)*0.1;
+rmu4 = importdata("rmu4.mat");
+rmu4 = rmu4(1:1000)*0.1;
+rmd1 = importdata("rmd1.mat");
+rmd1 = rmd1(1:1000)*0.1;
+rmd2 = importdata("rmd2.mat");
+rmd2 = rmd2(1:1000)*0.1;
 rmd3 = importdata("rmd3.mat")*0.1;
+rmd3 = rmd3(1:1000)*0.1;
 rmd4 = importdata("rmd4.mat")*0.1;
+rmd4 = rmd4(1:1000)*0.1;
 
 % 滤波上界
 P_noisy_up = struct();
@@ -132,6 +140,14 @@ for i = 4:4
     plot(T.(name), P_filtered2.(name)(:,1), "-.", 'Color', colors(5), 'linewidth', 0.8);
     plot(T.(name), P_filtered3.(name)(:,1), ":", 'Color', colors(6), 'linewidth', 1.0);
 end
+% 观测变化界
+xline(2.5, ":", 'linewidth', 1.0);
+xline(4.5, ":", 'linewidth', 1.0);
+xline(7.4, ":", 'linewidth', 1.0);
+xline(9.1, ":", 'linewidth', 1.0);
+xline(11.4, ":", 'linewidth', 1.0);
+xline(15.9, ":", 'linewidth', 1.0);
+% 标签
 ylabel('x(m)');     % 坐标轴标签
 hold off;
 
@@ -155,6 +171,14 @@ for i = 4:4
     plot(T.(name), P_filtered2.(name)(:,2), "-.", 'Color', colors(5), 'linewidth', 0.8);
     plot(T.(name), P_filtered3.(name)(:,2), ":", 'Color', colors(6), 'linewidth', 1.0);
 end
+% 观测变化界
+xline(2.5, ":", 'linewidth', 1.0);
+xline(4.5, ":", 'linewidth', 1.0);
+xline(7.4, ":", 'linewidth', 1.0);
+xline(9.1, ":", 'linewidth', 1.0);
+xline(11.4, ":", 'linewidth', 1.0);
+xline(15.9, ":", 'linewidth', 1.0);
+% 标签
 xlabel('t(s)');     % 坐标轴标签
 ylabel('y(m)');
 hold off;
