@@ -1,2 +1,7 @@
 # 画MCL示意图
 `MCL_description.m` 得到论文中MCL的示意图。
+Visio中调整线宽，外框和刻度1pt，内线0.5pt虚线。
+
+# 仿真
+`data_processing\240319_1748画三维轨迹图\plot_traj.m` 得到论文三维轨迹图。
+`data_processing\240319_1748画三维轨迹图\plot_compare.m` 得到三种方法的x、y坐标对比图和方差图。删除竖网格线
