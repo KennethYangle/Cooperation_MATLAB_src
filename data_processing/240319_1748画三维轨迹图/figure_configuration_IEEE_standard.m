@@ -39,7 +39,7 @@ set(0,'defaultAxesLineWidth',1);
 
 set(0,'defaultAxesGridLineStyle',':');
 set(0,'defaultAxesYGrid','on');
-set(0,'defaultAxesXGrid','on');
+set(0,'defaultAxesXGrid','off');
 
 set(0,'defaultAxesFontName','Arial');
 set(0,'defaultAxesFontSize',6);

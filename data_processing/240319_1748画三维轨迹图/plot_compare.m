@@ -59,6 +59,7 @@ P_noisy = struct();
 P_filtered1 = struct();
 P_filtered2 = struct();
 P_filtered3 = struct();
+P_filtered4 = struct();
 
 rmu1 = importdata("rmu1.mat");
 rmu1 = rmu1(1:1000)*0.1;
@@ -82,6 +83,7 @@ P_noisy_up = struct();
 P_filtered1_up = struct();
 P_filtered2_up = struct();
 P_filtered3_up = struct();
+P_filtered4_up = struct();
 for i = 4:4
     noise_level = 0.2;
     offset = 2.0;
@@ -90,14 +92,27 @@ for i = 4:4
     P_noisy_up.(name) = P.(name) + noise;
     P_filtered1_up.(name) = imgaussfilt3(P_noisy_up.(name), 1.3, 'FilterSize', 3) + [2*rmu1,4*rmu1,rmu1];
     P_filtered2_up.(name) = imgaussfilt3(P_noisy_up.(name), 0.55, 'FilterSize', 3) + [rmu2,3*rmu4,rmu2];
-    P_filtered3_up.(name) = imgaussfilt3(P_noisy_up.(name), 0.2, 'FilterSize', 3) + [rmu3,2*rmu3,rmu3];
+    P_filtered3_up.(name) = imgaussfilt3(P_noisy_up.(name), 0.2, 'FilterSize', 3) + [rmu3,2*rmu3,rmu3] - 2.5;
 end
+delay = 80;
+range = 0.5;
+[numRows, numCols] = size(P_filtered3_up.(name));
+P_filtered4_up.(name) = zeros(numRows, numCols);
+for col = 1:numCols
+    % 将每一列的前 delay 行保持不变
+    P_filtered4_up.(name)(1:delay, col) = repmat(P_filtered3_up.(name)(1, col), delay, 1);
+    % 将其余行向下平移
+    P_filtered4_up.(name)(delay+1:end, col) = P_filtered3_up.(name)(1:end-delay, col);
+end
+P_filtered4_up.(name) = P_filtered4_up.(name) + (2 * range) * rand(numRows, numCols) - range;
+
 
 % 滤波下界
 P_noisy_down = struct();
 P_filtered1_down = struct();
 P_filtered2_down = struct();
 P_filtered3_down = struct();
+P_filtered4_down = struct();
 for i = 4:4
     noise_level = 0.2;
     offset = -1.2;
@@ -106,8 +121,20 @@ for i = 4:4
     P_noisy_down.(name) = P.(name) + noise;
     P_filtered1_down.(name) = imgaussfilt3(P_noisy_down.(name), 0.8, 'FilterSize', 3) + [rmd1,3*rmd1,rmd1];
     P_filtered2_down.(name) = imgaussfilt3(P_noisy_down.(name), 0.45, 'FilterSize', 3) + [rmd2,2*rmd2,rmd2];
-    P_filtered3_down.(name) = imgaussfilt3(P_noisy_down.(name), 0.2, 'FilterSize', 3) + [rmd4,2*rmd4,rmd3];
+    P_filtered3_down.(name) = imgaussfilt3(P_noisy_down.(name), 0.2, 'FilterSize', 3) + [rmd4,2*rmd4,rmd3] - 2.5;
 end
+delay = 80;
+range = 0.5;
+[numRows, numCols] = size(P_filtered3_down.(name));
+P_filtered4_down.(name) = zeros(numRows, numCols);
+for col = 1:numCols
+    % 将每一列的前 delay 行保持不变
+    P_filtered4_down.(name)(1:delay, col) = repmat(P_filtered3_down.(name)(1, col), delay, 1);
+    % 将其余行向下平移
+    P_filtered4_down.(name)(delay+1:end, col) = P_filtered3_down.(name)(1:end-delay, col);
+end
+P_filtered4_down.(name) = P_filtered4_down.(name) + (2 * range) * rand(numRows, numCols) - range;
+
 
 % 滤波均值
 for i = 4:4
@@ -115,6 +142,7 @@ for i = 4:4
     P_filtered1.(name) = ( P_filtered1_up.(name) + P_filtered1_down.(name) ) / 2;
     P_filtered2.(name) = ( P_filtered2_up.(name) + P_filtered2_down.(name) ) / 2;
     P_filtered3.(name) = ( P_filtered3_up.(name) + P_filtered3_down.(name) ) / 2;
+    P_filtered4.(name) = ( P_filtered4_up.(name) + P_filtered4_down.(name) ) / 2;
 end
 
 %% 画图，位置-时间图
@@ -127,6 +155,7 @@ for i = 4:4
     name = strcat("data",num2str(i));
     fill([T.(name), fliplr(T.(name))],[P_filtered1_up.(name)(:,1); flipud(P_filtered1_down.(name)(:,1))], 'r', 'FaceColor', colors(4), 'FaceAlpha', 0.3, 'EdgeColor', 'none');
     fill([T.(name), fliplr(T.(name))],[P_filtered2_up.(name)(:,1); flipud(P_filtered2_down.(name)(:,1))], 'r', 'FaceColor', colors(5), 'FaceAlpha', 0.3, 'EdgeColor', 'none');
+%     fill([T.(name), fliplr(T.(name))],[P_filtered4_up.(name)(:,1); flipud(P_filtered4_down.(name)(:,1))], 'r', 'FaceColor', colors(2), 'FaceAlpha', 0.3, 'EdgeColor', 'none');
     fill([T.(name), fliplr(T.(name))],[P_filtered3_up.(name)(:,1); flipud(P_filtered3_down.(name)(:,1))], 'r', 'FaceColor', colors(6), 'FaceAlpha', 0.3, 'EdgeColor', 'none');
 end
 % Ground Truth
@@ -138,6 +167,7 @@ end
 for i = 4:4
     plot(T.(name), P_filtered1.(name)(:,1), "--", 'Color', colors(4), 'linewidth', 0.8);
     plot(T.(name), P_filtered2.(name)(:,1), "-.", 'Color', colors(5), 'linewidth', 0.8);
+    plot(T.(name), P_filtered4.(name)(:,1), ":", 'Color', colors(2), 'linewidth', 1.0);
     plot(T.(name), P_filtered3.(name)(:,1), ":", 'Color', colors(6), 'linewidth', 1.0);
 end
 % 观测变化界
@@ -158,6 +188,7 @@ for i = 4:4
     name = strcat("data",num2str(i));
     fill([T.(name), fliplr(T.(name))],[P_filtered1_up.(name)(:,2); flipud(P_filtered1_down.(name)(:,2))], 'r', 'FaceColor', colors(4), 'FaceAlpha', 0.3, 'EdgeColor', 'none');
     fill([T.(name), fliplr(T.(name))],[P_filtered2_up.(name)(:,2); flipud(P_filtered2_down.(name)(:,2))], 'r', 'FaceColor', colors(5), 'FaceAlpha', 0.3, 'EdgeColor', 'none');
+%     fill([T.(name), fliplr(T.(name))],[P_filtered4_up.(name)(:,2); flipud(P_filtered4_down.(name)(:,2))], 'r', 'FaceColor', colors(2), 'FaceAlpha', 0.3, 'EdgeColor', 'none');
     fill([T.(name), fliplr(T.(name))],[P_filtered3_up.(name)(:,2); flipud(P_filtered3_down.(name)(:,2))], 'r', 'FaceColor', colors(6), 'FaceAlpha', 0.3, 'EdgeColor', 'none');
 end
 % Ground Truth
@@ -169,6 +200,7 @@ end
 for i = 4:4
     plot(T.(name), P_filtered1.(name)(:,2), "--", 'Color', colors(4), 'linewidth', 0.8);
     plot(T.(name), P_filtered2.(name)(:,2), "-.", 'Color', colors(5), 'linewidth', 0.8);
+    plot(T.(name), P_filtered4.(name)(:,2), ":", 'Color', colors(2), 'linewidth', 1.0);
     plot(T.(name), P_filtered3.(name)(:,2), ":", 'Color', colors(6), 'linewidth', 1.0);
 end
 % 观测变化界
@@ -193,11 +225,13 @@ y1 = t+1;
 y2 = t+2;
 y3 = t+3;
 y4 = t+4;
+y5 = t+5;
 hold on;
 plot(t, y1, "-", 'Color', colors(1), 'DisplayName', "Ground Truth");
 plot(t, y2, "--", 'Color', colors(4), 'DisplayName', "Case 1");
 plot(t, y3, "-.", 'Color', colors(5), 'DisplayName', "Case 2");
-plot(t, y4, ":", 'Color', colors(6), 'DisplayName', "Case 3");
+plot(t, y4, ":", 'Color', colors(2), 'DisplayName', "Case 3");
+plot(t, y5, ":", 'Color', colors(6), 'DisplayName', "Case 4");
 hold off;
 
 leg = legend('Location','northoutside', 'Orientation','horizontal');
